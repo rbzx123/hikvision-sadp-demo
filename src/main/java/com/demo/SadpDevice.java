@@ -120,6 +120,8 @@ public class SadpDevice {
         AES aes = new AES(Mode.ECB, Padding.ZeroPadding, pub);
         byte[] pass = new byte[64];
         System.arraycopy(pub, 0, pass, 0, pub.length);
+        String u = ";" + uuid;
+        System.arraycopy(u.getBytes(), 0, pass, 16, u.getBytes().length);
         byte[] enPass = aes.encrypt(pass);
         String bsPass = Base64.encode(enPass);
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><Probe><Uuid>" + uuid + "</Uuid><Types>update</Types><PWErrorParse>true</PWErrorParse><MAC>" + deviceInfo.getMAC() + "</MAC><Password bSalt=\"true\">" + bsPass + "</Password><IPv4Address>" + newIP + "</IPv4Address><CommandPort>8000</CommandPort><IPv4SubnetMask>" + newMask + "</IPv4SubnetMask><IPv4Gateway>" + newGateway + "</IPv4Gateway><IPv6Address>::</IPv6Address><IPv6Gateway>::</IPv6Gateway><IPv6MaskLen>64</IPv6MaskLen><DHCP>false</DHCP><HttpPort>80</HttpPort><SDKOverTLSPort>8443</SDKOverTLSPort></Probe>";

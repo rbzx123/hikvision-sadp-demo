@@ -28,7 +28,7 @@ public class SadpDevice {
     public ScanResultList scanDevice() throws Exception {
         String uuid = UUID.randomUUID().toString();
         String inquire = "<?xml version=\"1.0\" encoding=\"utf-8\"?><Probe><Uuid>" + uuid + "</Uuid><Types>inquiry</Types></Probe>";
-        Set<String> respXml = UDPUtils.sendBroadcast(inquire, uuid, "255.255.255.255", 37020);
+        Set<String> respXml = UDPUtils.sendBroadcast(inquire, uuid, "239.255.255.250", 37020);
         StringBuilder stringBuilder = new StringBuilder();
         for (String s : respXml) {
             if (s != null && s.trim().length() > 0) {
@@ -60,7 +60,7 @@ public class SadpDevice {
         String uuid = UUID.randomUUID().toString();
         String exchangecodeXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><Probe><Uuid>" + uuid + "</Uuid><MAC>" + deviceInfo.getMAC() + "</MAC><Types>exchangecode</Types><Code>" + base64Hex + "</Code></Probe>";
 
-        Set<String> xmlSet = UDPUtils.sendBroadcast(exchangecodeXml, uuid, "255.255.255.255", 37020);
+        Set<String> xmlSet = UDPUtils.sendBroadcast(exchangecodeXml, uuid, "239.255.255.250", 37020);
         String respXml = "";
         respXml = xmlSet.stream().findFirst().get();
         ExchangeCode exchangeCode = xmlMapper.readValue(respXml, ExchangeCode.class);
@@ -89,7 +89,7 @@ public class SadpDevice {
                 "</Uuid><MAC>" + mac + "</MAC><Types>activate</Types><Password>" + bs64 + "</Password></Probe>";
 
         try {
-            Set<String> xmlSet = UDPUtils.sendBroadcast(activateXml, uuid, "255.255.255.255", 37020);
+            Set<String> xmlSet = UDPUtils.sendBroadcast(activateXml, uuid, "239.255.255.250", 37020);
             String respXml = "";
             respXml = xmlSet.stream().findFirst().get();
             System.out.println(respXml);
@@ -123,7 +123,7 @@ public class SadpDevice {
         byte[] enPass = aes.encrypt(pass);
         String bsPass = Base64.encode(enPass);
         String xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><Probe><Uuid>" + uuid + "</Uuid><Types>update</Types><PWErrorParse>true</PWErrorParse><MAC>" + deviceInfo.getMAC() + "</MAC><Password bSalt=\"true\">" + bsPass + "</Password><IPv4Address>" + newIP + "</IPv4Address><CommandPort>8000</CommandPort><IPv4SubnetMask>" + newMask + "</IPv4SubnetMask><IPv4Gateway>" + newGateway + "</IPv4Gateway><IPv6Address>::</IPv6Address><IPv6Gateway>::</IPv6Gateway><IPv6MaskLen>64</IPv6MaskLen><DHCP>false</DHCP><HttpPort>80</HttpPort><SDKOverTLSPort>8443</SDKOverTLSPort></Probe>";
-        Set<String> xmlSet = UDPUtils.sendBroadcast(xml, uuid, "255.255.255.255", 37020);
+        Set<String> xmlSet = UDPUtils.sendBroadcast(xml, uuid, "239.255.255.250", 37020);
         String respXml = "";
         respXml = xmlSet.stream().findFirst().get();
         UpdateResult updateResult = xmlMapper.readValue(respXml, UpdateResult.class);

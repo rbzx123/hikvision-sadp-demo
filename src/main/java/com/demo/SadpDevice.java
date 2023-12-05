@@ -23,7 +23,8 @@ import java.util.UUID;
 
 public class SadpDevice {
 
-    XmlMapper xmlMapper = new XmlMapper();
+       private final XmlMapper xmlMapper = XmlMapper.builder().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).build();
+
 
     public ScanResultList scanDevice() throws Exception {
         String uuid = UUID.randomUUID().toString();

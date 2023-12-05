@@ -70,17 +70,20 @@ public class SadpDevice {
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
             byte[] bytes3 = cipher.doFinal(bytes2);
-            String random = new String(bytes3);
-            UDPActivateResult result = activateDeviceStep2(random, password, deviceInfo.getMAC());
+            UDPActivateResult result = activateDeviceStep2(bytes3, password, deviceInfo.getMAC());
             System.out.println(result);
         }
     }
 
-    private UDPActivateResult activateDeviceStep2(String random, String password, String mac) throws
+    private UDPActivateResult activateDeviceStep2(byte[] random, String password, String mac) throws
             Exception {
-        AES aes = new AES(Mode.ECB, Padding.ZeroPadding, random.substring(0, 16).getBytes());
-        String newPwd = random.substring(0, 16) + password;
-        String bs64 = aes.encryptBase64(newPwd);
+         byte[] keys = new byte[16];
+        System.arraycopy(random, 0, keys, 0, 16);
+        AES aes = new AES(Mode.ECB, Padding.ZeroPadding, keys);
+        byte[] passByte = new byte[32];
+        System.arraycopy(random, 0, passByte, 0, 16);
+        System.arraycopy(password.getBytes(), 0, passByte, 16, password.getBytes().length);
+        String bs64 = aes.encryptBase64(passByte);
         String uuid = UUID.randomUUID().toString();
         String activateXml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><Probe><Uuid>" + uuid +
                 "</Uuid><MAC>" + mac + "</MAC><Types>activate</Types><Password>" + bs64 + "</Password></Probe>";
